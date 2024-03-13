@@ -1,7 +1,9 @@
+import sys
+from loguru import logger
 import pandas as pd
 import plotly.graph_objects as go
 
-def plot_formatted_csv(input: str ="data.csv", output: str = "output.png"):
+def plot_formatted_csv(input: str = "data.csv", output: str = "output.png"):
     # Read the scatter data from the CSV file
     scatter_data = pd.read_csv(input)
 
@@ -31,8 +33,13 @@ def plot_formatted_csv(input: str ="data.csv", output: str = "output.png"):
 
     # Save the image
     fig.write_image(file=output,format='png', engine='auto', width=960, height=540, scale=4)
-    print("plot_data> wrote {output} from {input}")
+    logger.info(f"plot_data> wrote {output} from {input}")
 
 # Running the main function
 if __name__ == "__main__":
-    plot_formatted_csv()
+    logger.remove(0)
+    logger.add(sys.stdout)
+    logger.success("Starting plot data.")
+    logger.add("plot_data.log", retention="5 minute")
+    with logger.catch(onerror=lambda _: sys.exit(1)):
+        plot_formatted_csv()

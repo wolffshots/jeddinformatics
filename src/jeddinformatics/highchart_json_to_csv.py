@@ -1,9 +1,11 @@
 import json
 import csv
+import sys
+from loguru import logger
 
 def convert_highchart_to_csv(input:str="data.json", output:str="data.csv"):
     # Load the Highcharts configuration from a JSON file
-    with open('data.json', 'r') as file:
+    with open(input, 'r') as file:
         highcharts_config = json.load(file)
 
     # Extract scatter data (assume all remaining series are scatter data)
@@ -18,8 +20,13 @@ def convert_highchart_to_csv(input:str="data.json", output:str="data.csv"):
         writer.writerow(['Series Name', 'Y'])
         writer.writerows(scatter_data)
 
-    print("highchart_to_csv> wrote {output} from {input}")
+    logger.info(f"highchart_to_csv> wrote {output} from {input}")
 
 # Running the main function
 if __name__ == "__main__":
-    convert_highchart_to_csv()
+    logger.remove(0)
+    logger.add(sys.stdout)
+    logger.success("Starting oncodb to csv.")
+    logger.add("oncodb_to_csv.log", retention="5 minute")
+    with logger.catch(onerror=lambda _: sys.exit(1)):
+        convert_highchart_to_csv()

@@ -1,5 +1,6 @@
 import csv
-
+import sys
+from loguru import logger
 
 def convert_onco_to_csv(input: str = "data.txt", output: str = "data.csv") -> None:
     # Open the input file in read mode and the output file in write mode
@@ -24,9 +25,13 @@ def convert_onco_to_csv(input: str = "data.txt", output: str = "data.csv") -> No
             
             # Write the extracted values to the output file
             writer.writerow([sample, expression_value])
-
-    print("onco_to_csv> wrote {output} from {input}")
+    logger.info(f"onco_to_csv> wrote {output} from {input}")
 
 # Running the main function
 if __name__ == "__main__":
-    convert_onco_to_csv()
+    logger.remove(0)
+    logger.add(sys.stdout)
+    logger.success("Starting oncodb to csv.")
+    logger.add("oncodb_to_csv.log", retention="5 minute")
+    with logger.catch(onerror=lambda _: sys.exit(1)):
+        convert_onco_to_csv()

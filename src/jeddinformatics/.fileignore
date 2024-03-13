@@ -1,0 +1,17 @@
+*_Store
+*.log
+*.py*
+*.js
+*.conf
+.gitignore
+.fileignore
+.dirignore
+*.cfg
+*.md
+requirements.txt
+*.png
+*.toml
+*.whl
+*.gz
+*.zip
+LICENSE

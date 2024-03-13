@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jeddinformatics"
+version = "0.1.6"
+author = [
+  { name="jadon", email="16850875+wolffshots@users.noreply.github.com" }
+]
+description = "Convert bioinformatics data to plots"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = [
+    "bioinformatics",
+    "plotly"
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3"
+]
+dependencies = [
+    "pandas>=2.2.1",
+    "plotly>=5.19.0",
+    "kaleido==0.2.1",
+    "loguru>=0.7.2"
+]
+
+[project.urls]
+Homepage = "https://github.com/wolffshots/jeddinformatics"
+Issues = "https://github.com/wolffshots/jeddinformatics/issues"
