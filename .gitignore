@@ -229,3 +229,4 @@ pyrightconfig.json
 
 /data
 *.log
+schema_model.py

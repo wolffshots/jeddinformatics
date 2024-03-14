@@ -1,9 +1,13 @@
 import sys
+from typing import Callable
 from loguru import logger
 import pandas as pd
 import plotly.graph_objects as go
 
-def plot_formatted_csv(input: str = "data.csv", output: str = "output.png"):
+def default_translation(input: str, _: object = {}) -> str:
+    return input
+
+def plot_formatted_csv(input: str = "data.csv", output: str = "output.png", mappings: object = {}, translation_func: Callable[[str, object], str] = default_translation):
     # Read the scatter data from the CSV file
     scatter_data = pd.read_csv(input)
 
@@ -17,18 +21,18 @@ def plot_formatted_csv(input: str = "data.csv", output: str = "output.png"):
 
         fig.add_trace(go.Box(
             y=series_data['Y'],
-            name=series_name,
+            name=translation_func(series_name, mappings=mappings),
             boxpoints='all',
             pointpos=0,
         ))
 
     # Update layout with titles and axis labels
     fig.update_layout(
-        title='Scatter Data with Box and Whisker Plot',
+        title=translation_func("Some title", mappings=mappings),
         xaxis={'type': 'category'},
-        xaxis_title='Data set',
-        yaxis_title='Z-value',
-        legend_title='Sample type'
+        xaxis_title=translation_func('Data set', mappings=mappings),
+        yaxis_title=translation_func('Z-value', mappings=mappings),
+        legend_title=translation_func('Sample type', mappings=mappings)
     )
 
     # Save the image

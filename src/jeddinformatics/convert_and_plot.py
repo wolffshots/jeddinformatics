@@ -1,10 +1,41 @@
 import os
 import sys
+import json
 import fnmatch
 from loguru import logger
+from jsonschema import validate
+from jsonschema.exceptions import ValidationError
 from jeddinformatics import oncodb_to_csv
 from jeddinformatics import highchart_json_to_csv
 from jeddinformatics import plot_data
+from jeddinformatics import generate_types
+
+try:
+    # Attempt to generate and import the model
+    schema_file_path = './schema.json'
+    if not os.path.exists(schema_file_path):
+        schema_file_path = os.path.join(os.path.dirname(__file__), "schema.json")
+    if os.path.exists(schema_file_path):
+        generate_types.generate_models_from_schema(schema_file_path, os.path.join(os.path.dirname(__file__), "schema_model.py"))
+    else:
+        raise FileNotFoundError(filename=schema_file_path)
+    from schema_model import Model
+    MappingsType = Model.__annotations__['mappings']
+except ImportError as e:
+    logger.error(f"the schema model could not be imported, did something go wrong generating it?")
+    raise e
+except FileNotFoundError as e:
+    logger.error(f"schema file '{schema_file_path}' does not exist")
+    raise e
+except Exception as e:
+    logger.error(f"uncaught exception when trying to generate and import schema: {e}")
+    raise e
+
+def translate_in_mapping(input: str, mappings: MappingsType = {}) -> str:
+    if input in mappings:
+        logger.info(f"string '{input}' found in mappings and updated to {mappings[input]}")
+        return mappings[input]
+    return input
 
 def replace_file_extension(file_path: str, new_extension: str) -> str:
     """
@@ -27,31 +58,61 @@ def replace_file_extension(file_path: str, new_extension: str) -> str:
     # Return the new file path
     return f"{base}.{new_extension}"
 
-def process_csv(file_path: str) -> None:
+def process_csv(file_path: str, mappings: MappingsType) -> None:
     logger.info(f"processing CSV file: {file_path}")
-    plot_data.plot_formatted_csv(input=file_path, output=replace_file_extension(file_path, "png"))
+    plot_data.plot_formatted_csv(input=file_path, output=replace_file_extension(file_path, "png"), mappings=mappings, translation_func=translate_in_mapping)
 
-def process_json(file_path: str) -> None:    
+def process_json(file_path: str, mappings: MappingsType) -> None:    
     logger.info(f"processing JSON file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
     highchart_json_to_csv.convert_highchart_to_csv(input=file_path, output=output_path)
-    process_csv(file_path=output_path)
+    process_csv(file_path=output_path, mappings=mappings)
 
-def process_txt(file_path: str) -> None:
+def process_txt(file_path: str, mappings: MappingsType) -> None:
     logger.info(f"processing TXT file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
     oncodb_to_csv.convert_onco_to_csv(input=file_path, output=output_path)
-    process_csv(file_path=output_path)
+    process_csv(file_path=output_path, mappings=mappings)
 
 def process_files(root_directory: str = ".") -> None:
+    config_file_path = './config.json'
+    if not os.path.exists(config_file_path):
+        config_file_path = os.path.join(os.path.dirname(__file__), "config.json")
+
     ignored_file_path = './.fileignore'
     if not os.path.exists(ignored_file_path):
         ignored_file_path = os.path.join(os.path.dirname(__file__), ".fileignore")
+
     ignored_dir_path = './.dirignore'
     if not os.path.exists(ignored_dir_path):
         ignored_dir_path = os.path.join(os.path.dirname(__file__), ".dirignore")
+
     count_json = 0
     count_txt = 0
+
+    
+    try:
+        with open(config_file_path, 'r') as config_file:
+            config: Model = json.load(config_file)
+    except:
+        logger.warning(f"config file not found '{config_file_path}', using default config")
+        config: Model = {
+            "$schema": f"{schema_file_path}",
+            "mappings": {}
+        }
+    mappings = config['mappings']
+    logger.debug(f"using mappings: {mappings}")
+    # validate that the schema matches the config
+    try:
+        with open(schema_file_path, 'r') as schema_file:
+            schema = json.load(schema_file)
+            validate(instance=config, schema=schema)
+            logger.success("validation successful!")
+    except ValidationError as e:
+        logger.error(f"validation failed: {e}")
+        raise e
+    except Exception as e:
+        raise e
 
     try:
         with open(ignored_file_path, 'r') as ignore_file_file:
@@ -87,10 +148,10 @@ def process_files(root_directory: str = ".") -> None:
             logger.info(f"starting {'gene' if gene_or_protein_expression.lower().find('gene') != -1 else 'protein'} name: {gene_or_protein_name}, cancer type: {type_of_cancer}, source: {source_database}")
 
             if file == 'data.json':
-                process_json(file_path=file_path)
+                process_json(file_path=file_path, mappings=mappings)
                 count_json += 1
             elif file == 'data.txt':
-                process_txt(file_path=file_path)
+                process_txt(file_path=file_path, mappings=mappings)
                 count_txt += 1
     logger.info(f"finished processing {count_json} JSON files and {count_txt} TXT files")
 

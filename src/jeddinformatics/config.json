@@ -1,0 +1,9 @@
+{
+    "$schema": "./schema.json",
+    "mappings": {
+        "normal":"NC",
+        "Normal":"NC",
+        "OV":"OV",
+        "Some title":"Translated title"
+    }
+}

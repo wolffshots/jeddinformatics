@@ -14,4 +14,7 @@ requirements.txt
 *.whl
 *.gz
 *.zip
+settings.json
 LICENSE
+schema.json
+config*.json
