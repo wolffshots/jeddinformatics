@@ -68,7 +68,9 @@ def replace_file_extension(file_path: str, new_extension: str) -> str:
     return f"{base}.{new_extension}"
 
 
-def process_csv(file_path: str, mappings: MappingsType, cancer_type: str = "", is_gene: bool = False) -> None:
+def process_csv(
+    file_path: str, mappings: MappingsType, cancer_type: str = "", is_gene: bool = False
+) -> None:
     logger.debug(f"processing CSV file: {file_path}")
     plot_data.plot_formatted_csv(
         input=file_path,
@@ -76,25 +78,39 @@ def process_csv(file_path: str, mappings: MappingsType, cancer_type: str = "", i
         mappings=mappings,
         translation_func=translate_in_mapping,
         cancer_type=cancer_type,
-        is_gene=is_gene
+        is_gene=is_gene,
     )
 
 
-def process_json(file_path: str, mappings: MappingsType, cancer_type: str = "", is_gene: bool = False) -> None:
+def process_json(
+    file_path: str, mappings: MappingsType, cancer_type: str = "", is_gene: bool = False
+) -> None:
     logger.debug(f"processing JSON file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
     highchart_json_to_csv.convert_highchart_to_csv(input=file_path, output=output_path)
-    process_csv(file_path=output_path, mappings=mappings, cancer_type=cancer_type, is_gene=is_gene)
+    process_csv(
+        file_path=output_path,
+        mappings=mappings,
+        cancer_type=cancer_type,
+        is_gene=is_gene,
+    )
 
 
-def process_txt(file_path: str, mappings: MappingsType, cancer_type: str = "", is_gene: bool = False) -> None:
+def process_txt(
+    file_path: str, mappings: MappingsType, cancer_type: str = "", is_gene: bool = False
+) -> None:
     logger.debug(f"processing TXT file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
     oncodb_to_csv.convert_onco_to_csv(input=file_path, output=output_path)
-    process_csv(file_path=output_path, mappings=mappings, cancer_type=cancer_type, is_gene=is_gene)
+    process_csv(
+        file_path=output_path,
+        mappings=mappings,
+        cancer_type=cancer_type,
+        is_gene=is_gene,
+    )
 
 
-def process_files(root_directory: str = ".") -> None:
+def process_files(root_directory: str = ".") -> None:  # noqa: C901
     config_file_path = "./config.json"
     if not os.path.exists(config_file_path):
         config_file_path = os.path.join(os.path.dirname(__file__), "config.json")
@@ -158,7 +174,7 @@ def process_files(root_directory: str = ".") -> None:
                 for ignored_file_pattern in ignored_file_patterns
                 if fnmatch.fnmatch(file, ignored_file_pattern)
             ]
-            plural = 's' if len(matching_ignored_file_patterns) > 1 else ''
+            plural = "s" if len(matching_ignored_file_patterns) > 1 else ""
             if matching_ignored_file_patterns:
                 logger.debug(
                     f"skipping {file_path} because it matched ignored file pattern{plural}: {matching_ignored_file_patterns}"
@@ -185,17 +201,28 @@ def process_files(root_directory: str = ".") -> None:
             gene_or_protein_name = path_components[-2]
             cancer_type = path_components[-3]
             source_database = path_components[-4]
-            is_gene = path_components[-5].lower().find('gene') != -1
-            gene_or_protein_expression = 'gene' if is_gene else 'protein'
+            is_gene = path_components[-5].lower().find("gene") != -1
+            gene_or_protein_expression = "gene" if is_gene else "protein"
+            name_string = f"starting {gene_or_protein_expression} with name: {gene_or_protein_name}"
             logger.info(
-                f"starting {gene_or_protein_expression} with name: {gene_or_protein_name}, cancer type: {cancer_type}, source: {source_database}"
+                f"{name_string}, cancer type: {cancer_type}, source: {source_database}"
             )
 
             if file == "data.json":
-                process_json(file_path=file_path, mappings=mappings, cancer_type=cancer_type, is_gene=is_gene)
+                process_json(
+                    file_path=file_path,
+                    mappings=mappings,
+                    cancer_type=cancer_type,
+                    is_gene=is_gene,
+                )
                 count_json += 1
             elif file == "data.txt":
-                process_txt(file_path=file_path, mappings=mappings, cancer_type=cancer_type, is_gene=is_gene)
+                process_txt(
+                    file_path=file_path,
+                    mappings=mappings,
+                    cancer_type=cancer_type,
+                    is_gene=is_gene,
+                )
                 count_txt += 1
     logger.info(
         f"finished processing {count_json} JSON files and {count_txt} TXT files"

@@ -4,7 +4,6 @@ from loguru import logger
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-import math
 
 
 def default_translation(input: str, _: object = {}) -> str:
@@ -17,7 +16,7 @@ def plot_formatted_csv(
     mappings: object = {},
     translation_func: Callable[[str, object], str] = default_translation,
     cancer_type: str = "",
-    is_gene: bool = False
+    is_gene: bool = False,
 ):
     # Read the scatter data from the CSV file
     scatter_data = pd.read_csv(input)
@@ -30,7 +29,7 @@ def plot_formatted_csv(
         # Filter data for the current series
         mask = scatter_data["Series Name"] == series_name
         if is_gene:
-            scatter_data.loc[mask, 'Y'] = np.log2(scatter_data.loc[mask, "Y"])
+            scatter_data.loc[mask, "Y"] = np.log2(scatter_data.loc[mask, "Y"])
 
         name = (
             translation_func(cancer_type, mappings=mappings)
@@ -39,7 +38,7 @@ def plot_formatted_csv(
         )
         fig.add_trace(
             go.Box(
-                y=scatter_data.loc[mask, 'Y'],
+                y=scatter_data.loc[mask, "Y"],
                 name=name,
                 boxpoints="all",
                 pointpos=0,
