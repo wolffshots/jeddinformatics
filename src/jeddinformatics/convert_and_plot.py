@@ -12,17 +12,22 @@ from jeddinformatics import generate_types
 
 try:
     # Attempt to generate and import the model
-    schema_file_path = './schema.json'
+    schema_file_path = "./schema.json"
     if not os.path.exists(schema_file_path):
         schema_file_path = os.path.join(os.path.dirname(__file__), "schema.json")
     if os.path.exists(schema_file_path):
-        generate_types.generate_models_from_schema(schema_file_path, os.path.join(os.path.dirname(__file__), "schema_model.py"))
+        generate_types.generate_models_from_schema(
+            schema_file_path, os.path.join(os.path.dirname(__file__), "schema_model.py")
+        )
     else:
         raise FileNotFoundError(filename=schema_file_path)
     from schema_model import Model
-    MappingsType = Model.__annotations__['mappings']
+
+    MappingsType = Model.__annotations__["mappings"]
 except ImportError as e:
-    logger.error(f"the schema model could not be imported, did something go wrong generating it?")
+    logger.error(
+        "the schema model could not be imported, did something go wrong generating it?"
+    )
     raise e
 except FileNotFoundError as e:
     logger.error(f"schema file '{schema_file_path}' does not exist")
@@ -31,11 +36,15 @@ except Exception as e:
     logger.error(f"uncaught exception when trying to generate and import schema: {e}")
     raise e
 
+
 def translate_in_mapping(input: str, mappings: MappingsType = {}) -> str:
     if input in mappings:
-        logger.info(f"string '{input}' found in mappings and updated to {mappings[input]}")
+        logger.info(
+            f"string '{input}' found in mappings and updated to {mappings[input]}"
+        )
         return mappings[input]
     return input
+
 
 def replace_file_extension(file_path: str, new_extension: str) -> str:
     """
@@ -51,22 +60,30 @@ def replace_file_extension(file_path: str, new_extension: str) -> str:
     """
     # Split the file path into the path without the extension and the original extension
     base, _ = os.path.splitext(file_path)
-    
+
     # Ensure the new extension does not start with a dot, and then append it
-    new_extension = new_extension.lstrip('.')
-    
+    new_extension = new_extension.lstrip(".")
+
     # Return the new file path
     return f"{base}.{new_extension}"
 
+
 def process_csv(file_path: str, mappings: MappingsType) -> None:
     logger.info(f"processing CSV file: {file_path}")
-    plot_data.plot_formatted_csv(input=file_path, output=replace_file_extension(file_path, "png"), mappings=mappings, translation_func=translate_in_mapping)
+    plot_data.plot_formatted_csv(
+        input=file_path,
+        output=replace_file_extension(file_path, "png"),
+        mappings=mappings,
+        translation_func=translate_in_mapping,
+    )
 
-def process_json(file_path: str, mappings: MappingsType) -> None:    
+
+def process_json(file_path: str, mappings: MappingsType) -> None:
     logger.info(f"processing JSON file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
     highchart_json_to_csv.convert_highchart_to_csv(input=file_path, output=output_path)
     process_csv(file_path=output_path, mappings=mappings)
+
 
 def process_txt(file_path: str, mappings: MappingsType) -> None:
     logger.info(f"processing TXT file: {file_path}")
@@ -74,37 +91,36 @@ def process_txt(file_path: str, mappings: MappingsType) -> None:
     oncodb_to_csv.convert_onco_to_csv(input=file_path, output=output_path)
     process_csv(file_path=output_path, mappings=mappings)
 
+
 def process_files(root_directory: str = ".") -> None:
-    config_file_path = './config.json'
+    config_file_path = "./config.json"
     if not os.path.exists(config_file_path):
         config_file_path = os.path.join(os.path.dirname(__file__), "config.json")
 
-    ignored_file_path = './.fileignore'
+    ignored_file_path = "./.fileignore"
     if not os.path.exists(ignored_file_path):
         ignored_file_path = os.path.join(os.path.dirname(__file__), ".fileignore")
 
-    ignored_dir_path = './.dirignore'
+    ignored_dir_path = "./.dirignore"
     if not os.path.exists(ignored_dir_path):
         ignored_dir_path = os.path.join(os.path.dirname(__file__), ".dirignore")
 
     count_json = 0
     count_txt = 0
 
-    
     try:
-        with open(config_file_path, 'r') as config_file:
+        with open(config_file_path, "r") as config_file:
             config: Model = json.load(config_file)
-    except:
-        logger.warning(f"config file not found '{config_file_path}', using default config")
-        config: Model = {
-            "$schema": f"{schema_file_path}",
-            "mappings": {}
-        }
-    mappings = config['mappings']
+    except Exception as e:
+        logger.warning(
+            f"config file not found '{config_file_path}' with {e}, using default config"
+        )
+        config: Model = {"$schema": f"{schema_file_path}", "mappings": {}}
+    mappings = config["mappings"]
     logger.debug(f"using mappings: {mappings}")
     # validate that the schema matches the config
     try:
-        with open(schema_file_path, 'r') as schema_file:
+        with open(schema_file_path, "r") as schema_file:
             schema = json.load(schema_file)
             validate(instance=config, schema=schema)
             logger.success("validation successful!")
@@ -115,27 +131,53 @@ def process_files(root_directory: str = ".") -> None:
         raise e
 
     try:
-        with open(ignored_file_path, 'r') as ignore_file_file:
+        with open(ignored_file_path, "r") as ignore_file_file:
             ignored_file_patterns = [line.strip() for line in ignore_file_file]
-    except:
+    except Exception as e:
+        logger.warning(
+            f"ignored file '{ignored_file_path}' couldn't be parsed with {e}, using default of none"
+        )
         ignored_file_patterns = []
 
     try:
-        with open(ignored_dir_path, 'r') as ignore_dir_file:
+        with open(ignored_dir_path, "r") as ignore_dir_file:
             ignored_dir_patterns = [line.strip() for line in ignore_dir_file]
-    except:
+    except Exception as e:
+        logger.warning(
+            f"ignored dirs '{ignored_dir_patterns}' couldn't be parsed with {e}, using default of none"
+        )
         ignored_dir_patterns = []
 
     for root, _, files in os.walk(root_directory):
         for file in files:
             file_path: str = os.path.join(root, file)
-            matching_ignored_file_patterns = [ignored_file_pattern for ignored_file_pattern in ignored_file_patterns if fnmatch.fnmatch(file, ignored_file_pattern)]
+            matching_ignored_file_patterns = [
+                ignored_file_pattern
+                for ignored_file_pattern in ignored_file_patterns
+                if fnmatch.fnmatch(file, ignored_file_pattern)
+            ]
             if matching_ignored_file_patterns:
-                logger.debug(f"skipping {file_path} because it matched ignored file pattern{'s' if len(matching_ignored_file_patterns) > 1 else ''}: {matching_ignored_file_patterns}")
+                logger.debug(
+                    f"""\
+                    skipping {file_path} because it matched ignored file pattern\
+                    {'s' if len(matching_ignored_file_patterns) > 1 else ''}: \
+                    {matching_ignored_file_patterns}\
+                    """
+                )
                 continue
-            matching_ignored_dir_patterns = [ignored_dir_pattern for ignored_dir_pattern in ignored_dir_patterns if fnmatch.fnmatch(file_path, ignored_dir_pattern)]
+            matching_ignored_dir_patterns = [
+                ignored_dir_pattern
+                for ignored_dir_pattern in ignored_dir_patterns
+                if fnmatch.fnmatch(file_path, ignored_dir_pattern)
+            ]
             if matching_ignored_dir_patterns:
-                logger.debug(f"skipping {file_path} because it matched ignored dir pattern{'s' if len(matching_ignored_dir_patterns) > 1 else ''}: {matching_ignored_dir_patterns}")
+                logger.debug(
+                    f"""\
+                    skipping {file_path} because it matched ignored dir \
+                    pattern{'s' if len(matching_ignored_dir_patterns) > 1 else ''}: \
+                    {matching_ignored_dir_patterns}\
+                    """
+                )
                 continue
             # Split the path to extract directory levels
             path_components = file_path.split(os.sep)
@@ -145,15 +187,25 @@ def process_files(root_directory: str = ".") -> None:
             type_of_cancer = path_components[-3]
             source_database = path_components[-4]
             gene_or_protein_expression = path_components[-5]
-            logger.info(f"starting {'gene' if gene_or_protein_expression.lower().find('gene') != -1 else 'protein'} name: {gene_or_protein_name}, cancer type: {type_of_cancer}, source: {source_database}")
+            logger.info(
+                f"""\
+                starting {'gene' if gene_or_protein_expression.lower().find('gene') != -1 else 'protein'} name: \
+                {gene_or_protein_name}, \
+                cancer type: {type_of_cancer}, \
+                source: {source_database}\
+                """
+            )
 
-            if file == 'data.json':
+            if file == "data.json":
                 process_json(file_path=file_path, mappings=mappings)
                 count_json += 1
-            elif file == 'data.txt':
+            elif file == "data.txt":
                 process_txt(file_path=file_path, mappings=mappings)
                 count_txt += 1
-    logger.info(f"finished processing {count_json} JSON files and {count_txt} TXT files")
+    logger.info(
+        f"finished processing {count_json} JSON files and {count_txt} TXT files"
+    )
+
 
 # Assumed structure:
 # ```
@@ -164,6 +216,7 @@ def process_files(root_directory: str = ".") -> None:
 #                  └───{data.json or data.txt}
 # ```
 
+
 def main():
     with logger.catch(onerror=lambda _: sys.exit(1)):
         logger.remove(0)
@@ -172,5 +225,6 @@ def main():
         logger.add("jeddinformatics.log", retention="5 minute")
         process_files(sys.argv[1]) if len(sys.argv) > 1 else process_files()
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     main()
