@@ -21,7 +21,7 @@ def convert_highchart_to_csv(input: str = "data.json", output: str = "data.csv")
         writer.writerow(["Series Name", "Y"])
         writer.writerows(scatter_data)
 
-    logger.info(f"highchart_to_csv> wrote {output} from {input}")
+    logger.debug(f"wrote {output} from {input}")
 
 
 # Running the main function

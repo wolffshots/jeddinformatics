@@ -26,7 +26,7 @@ def convert_onco_to_csv(input: str = "data.txt", output: str = "data.csv") -> No
 
             # Write the extracted values to the output file
             writer.writerow([sample, expression_value])
-    logger.info(f"onco_to_csv> wrote {output} from {input}")
+    logger.debug(f"wrote {output} from {input}")
 
 
 # Running the main function
