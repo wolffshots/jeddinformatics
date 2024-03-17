@@ -11,8 +11,14 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "colors": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
-      "required": ["$schema", "mappings"],
+      "required": ["$schema", "mappings", "colors"],
       "additionalProperties": false
 }

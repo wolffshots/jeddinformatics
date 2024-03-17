@@ -4,9 +4,15 @@
         "normal": "NC",
         "Normal": "NC",
         "OV": "OV",
+        "UCEC": "UCEC",
         "Ovarian Cancer": "OV",
         "Uterine Cancer": "UCEC",
         "Some title": "Translated title",
         "log2(TPM)": "log₂(TPM)"
+    },
+    "colors": {
+        "NC": "blue",
+        "OV": "green",
+        "UCEC": "red"
     }
 }

@@ -24,6 +24,7 @@ try:
     from schema_model import Model
 
     MappingsType = Model.__annotations__["mappings"]
+    ColorsType = Model.__annotations__["colors"]
 except ImportError as e:
     logger.error(
         "the schema model could not be imported, did something go wrong generating it?"
@@ -69,7 +70,7 @@ def replace_file_extension(file_path: str, new_extension: str) -> str:
 
 
 def process_csv(
-    file_path: str, mappings: MappingsType, cancer_type: str = "", is_gene: bool = False
+    file_path: str, mappings: MappingsType, colors: ColorsType, cancer_type: str = "", is_gene: bool = False
 ) -> None:
     logger.debug(f"processing CSV file: {file_path}")
     plot_data.plot_formatted_csv(
@@ -77,13 +78,14 @@ def process_csv(
         output=replace_file_extension(file_path, "png"),
         mappings=mappings,
         translation_func=translate_in_mapping,
+        colors=colors,
         cancer_type=cancer_type,
         is_gene=is_gene,
     )
 
 
 def process_json(
-    file_path: str, mappings: MappingsType, cancer_type: str = "", is_gene: bool = False
+    file_path: str, mappings: MappingsType, colors=ColorsType, cancer_type: str = "", is_gene: bool = False
 ) -> None:
     logger.debug(f"processing JSON file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
@@ -91,13 +93,14 @@ def process_json(
     process_csv(
         file_path=output_path,
         mappings=mappings,
+        colors=colors,
         cancer_type=cancer_type,
         is_gene=is_gene,
     )
 
 
 def process_txt(
-    file_path: str, mappings: MappingsType, cancer_type: str = "", is_gene: bool = False
+    file_path: str, mappings: MappingsType, colors=ColorsType, cancer_type: str = "", is_gene: bool = False
 ) -> None:
     logger.debug(f"processing TXT file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
@@ -105,6 +108,7 @@ def process_txt(
     process_csv(
         file_path=output_path,
         mappings=mappings,
+        colors=colors,
         cancer_type=cancer_type,
         is_gene=is_gene,
     )
@@ -136,6 +140,8 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
         config: Model = {"$schema": f"{schema_file_path}", "mappings": {}}
     mappings = config["mappings"]
     logger.debug(f"using mappings: {mappings}")
+    colors = config["colors"]
+    logger.debug(f"using colors: {colors}")
     # validate that the schema matches the config
     try:
         with open(schema_file_path, "r") as schema_file:
@@ -212,6 +218,7 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
                 process_json(
                     file_path=file_path,
                     mappings=mappings,
+                    colors=colors,
                     cancer_type=cancer_type,
                     is_gene=is_gene,
                 )
@@ -220,6 +227,7 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
                 process_txt(
                     file_path=file_path,
                     mappings=mappings,
+                    colors=colors,
                     cancer_type=cancer_type,
                     is_gene=is_gene,
                 )

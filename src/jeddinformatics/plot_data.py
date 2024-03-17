@@ -9,12 +9,15 @@ import plotly.graph_objects as go
 def default_translation(input: str, _: object = {}) -> str:
     return input
 
+def color_for_series(series: str, colors: object = {}) -> str:
+    return colors.get(series, "purple")
 
 def plot_formatted_csv(
     input: str = "data.csv",
     output: str = "output.png",
     mappings: object = {},
     translation_func: Callable[[str, object], str] = default_translation,
+    colors: object = {},
     cancer_type: str = "",
     is_gene: bool = False,
 ):
@@ -42,6 +45,7 @@ def plot_formatted_csv(
                 name=name,
                 boxpoints="all",
                 pointpos=0,
+                marker_color=color_for_series(name, colors)
             )
         )
     yaxes_title = "Z-value" if not is_gene else "log2(TPM)"
