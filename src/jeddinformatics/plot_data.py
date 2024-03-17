@@ -56,7 +56,7 @@ def plot_formatted_csv(
     fig.update_layout(
         xaxis={"type": "category"},
         yaxis_title=translation_func(yaxes_title, mappings=mappings),
-        legend_title=translation_func("Sample type", mappings=mappings),
+        showlegend=False
     )
 
     # Save the image

@@ -21,10 +21,10 @@ try:
         )
     else:
         raise FileNotFoundError(filename=schema_file_path)
-    from schema_model import Model
+    from jeddinformatics import schema_model
 
-    MappingsType = Model.__annotations__["mappings"]
-    ColorsType = Model.__annotations__["colors"]
+    MappingsType = schema_model.Model.__annotations__["mappings"]
+    ColorsType = schema_model.Model.__annotations__["colors"]
 except ImportError as e:
     logger.error(
         "the schema model could not be imported, did something go wrong generating it?"
@@ -132,12 +132,12 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
 
     try:
         with open(config_file_path, "r") as config_file:
-            config: Model = json.load(config_file)
+            config: schema_model.Model = json.load(config_file)
     except Exception as e:
         logger.warning(
             f"config file not found '{config_file_path}' with {e}, using default config"
         )
-        config: Model = {"$schema": f"{schema_file_path}", "mappings": {}}
+        config: schema_model.Model = {"$schema": f"{schema_file_path}", "mappings": {}}
     mappings = config["mappings"]
     logger.debug(f"using mappings: {mappings}")
     colors = config["colors"]
