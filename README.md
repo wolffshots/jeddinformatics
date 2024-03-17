@@ -11,6 +11,28 @@ This will install the required packages
 python3 main.py <your data folder>
 ```
 
+## Config files
+```json
+{
+    "$schema": "https://raw.githubusercontent.com/wolffshots/jeddinformatics/main/src/jeddinformatics/schema.json",
+    "mappings": {
+        "normal": "NC",
+        "Normal": "NC",
+        "OV": "OV",
+        "UCEC": "UCEC",
+        "Ovarian Cancer": "OV",
+        "Uterine Cancer": "UCEC",
+        "Some title": "Translated title",
+        "log2(TPM)": "log₂(TPM)"
+    },
+    "colors": {
+        "NC": "blue",
+        "OV": "green",
+        "UCEC": "green"
+    }
+}
+```
+
 ## Building and distributing
 ```bash
 rm -fr dist && python3 -m build && python3 -m twine upload --repository testpypi dist/*
