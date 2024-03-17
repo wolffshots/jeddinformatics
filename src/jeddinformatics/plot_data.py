@@ -9,8 +9,10 @@ import plotly.graph_objects as go
 def default_translation(input: str, _: object = {}) -> str:
     return input
 
+
 def color_for_series(series: str, colors: object = {}) -> str:
     return colors.get(series, "purple")
+
 
 def plot_formatted_csv(
     input: str = "data.csv",
