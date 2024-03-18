@@ -34,7 +34,9 @@ python3 main.py <your data folder>
         "NC": "blue",
         "OV": "green",
         "UCEC": "red",
-        "box": "black"
+        "box": "black",
+        "plot_background_color": "lightgray",
+        "paper_background_color": "white"
     },
     "precedence": ["NC", "normal", "Normal"],
     "jitter": 0.5,

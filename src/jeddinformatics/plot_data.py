@@ -66,7 +66,9 @@ def plot_formatted_csv(
     fig.update_layout(
         xaxis={"type": "category"},
         yaxis_title=translation_func(yaxes_title, mappings=mappings),
-        showlegend=False
+        showlegend=False,
+        plot_bgcolor=colors["plot_background_color"],
+        paper_bgcolor=colors["paper_background_color"],
     )
 
     # Save the image
