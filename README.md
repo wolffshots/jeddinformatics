@@ -23,7 +23,7 @@ python3 main.py <your data folder>
         "Ovarian Cancer": "OV",
         "Uterine Cancer": "UCEC",
         "Some title": "Translated title",
-        "log2(TPM)": "log₂(TPM)"
+        "log2(TPM)": "log<sub>2</sub>(TPM)"
     },
     "colors": {
         "NC": "blue",
