@@ -6,6 +6,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from jeddinformatics import schema_model
 
+
 def default_translation(input: str, _: object = {}) -> str:
     return input
 
@@ -31,9 +32,15 @@ def plot_formatted_csv(
     mappings = config["mappings"]
     colors = config["colors"]
     precedence = config["precedence"]
-    
-    sorted_unique_series = sorted(scatter_data["Series Name"].unique(),
-        key=lambda x: (x not in precedence, precedence.index(x) if x in precedence else 0, x))
+
+    sorted_unique_series = sorted(
+        scatter_data["Series Name"].unique(),
+        key=lambda x: (
+            x not in precedence,
+            precedence.index(x) if x in precedence else 0,
+            x,
+        ),
+    )
 
     # Iterate over each unique series name in the scatter data
     for series_name in sorted_unique_series:
@@ -54,10 +61,14 @@ def plot_formatted_csv(
                 name=name,
                 boxpoints="all",
                 pointpos=0,
-                marker=dict(color=color_for_series(name, colors), size=config["point_size"]),
-                line=dict(color=color_for_series("box", colors), width=config["line_width"]),
-                fillcolor='rgba(0,0,0,0)',
-                jitter=config["jitter"]
+                marker=dict(
+                    color=color_for_series(name, colors), size=config["point_size"]
+                ),
+                line=dict(
+                    color=color_for_series("box", colors), width=config["line_width"]
+                ),
+                fillcolor="rgba(0,0,0,0)",
+                jitter=config["jitter"],
             )
         )
     yaxes_title = "Z-value" if not is_gene else "log2(TPM)"
@@ -73,7 +84,12 @@ def plot_formatted_csv(
 
     # Save the image
     fig.write_image(
-        file=output, format="png", engine="auto", width=config["plot_width"], height=config["plot_height"], scale=4
+        file=output,
+        format="png",
+        engine="auto",
+        width=config["plot_width"],
+        height=config["plot_height"],
+        scale=4,
     )
     logger.debug(f"wrote {output} from {input}")
 

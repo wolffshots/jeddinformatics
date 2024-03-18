@@ -33,11 +33,11 @@ except FileNotFoundError as e:
 except Exception as e:
     logger.error(f"uncaught exception when trying to generate and import schema: {e}")
     raise e
-
 # import the rest
 from jeddinformatics import oncodb_to_csv
 from jeddinformatics import highchart_json_to_csv
 from jeddinformatics import plot_data
+
 
 def translate_in_mapping(input: str, mappings: MappingsType = {}) -> str:
     if input in mappings:
@@ -71,7 +71,10 @@ def replace_file_extension(file_path: str, new_extension: str) -> str:
 
 
 def process_csv(
-    file_path: str, config: schema_model.Model, cancer_type: str = "", is_gene: bool = False
+    file_path: str,
+    config: schema_model.Model,
+    cancer_type: str = "",
+    is_gene: bool = False,
 ) -> None:
     logger.debug(f"processing CSV file: {file_path}")
     plot_data.plot_formatted_csv(
@@ -85,7 +88,10 @@ def process_csv(
 
 
 def process_json(
-    file_path: str, config: schema_model.Model, cancer_type: str = "", is_gene: bool = False
+    file_path: str,
+    config: schema_model.Model,
+    cancer_type: str = "",
+    is_gene: bool = False,
 ) -> None:
     logger.debug(f"processing JSON file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
@@ -99,7 +105,10 @@ def process_json(
 
 
 def process_txt(
-    file_path: str, config: schema_model.Model, cancer_type: str = "", is_gene: bool = False
+    file_path: str,
+    config: schema_model.Model,
+    cancer_type: str = "",
+    is_gene: bool = False,
 ) -> None:
     logger.debug(f"processing TXT file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
