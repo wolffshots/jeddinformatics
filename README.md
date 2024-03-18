@@ -11,11 +11,6 @@ This will install the required packages
 python3 main.py <your data folder>
 ```
 
-## TODO
-- [ ] make sure non cancer is always first
-- [ ] change boxes and whiskers to be a different colour
-- [ ] remove shading
-
 ## Config files
 ```json
 {
