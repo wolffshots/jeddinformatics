@@ -17,8 +17,38 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "precedence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "jitter":{
+          "type": "number"
+        },
+        "point_size":{
+          "type": "number"
+        },
+        "line_width":{
+          "type": "number"
+        },
+        "plot_width":{
+          "type": "number"
+        },
+        "plot_height":{
+          "type": "number"
         }
       },
-      "required": ["$schema", "mappings", "colors"],
+      "required": ["$schema", 
+        "mappings", 
+        "colors", 
+        "precedence", 
+        "jitter", 
+        "point_size", 
+        "line_width",
+        "plot_height",
+        "plot_width"
+      ],
       "additionalProperties": false
 }

@@ -13,6 +13,13 @@
     "colors": {
         "NC": "blue",
         "OV": "green",
-        "UCEC": "red"
-    }
+        "UCEC": "red",
+        "box": "black"
+    },
+    "precedence": ["NC", "normal", "Normal"],
+    "jitter": 0.5,
+    "line_width": 1.5,
+    "point_size": 6,
+    "plot_height": 540,
+    "plot_width": 960
 }

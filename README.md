@@ -11,6 +11,11 @@ This will install the required packages
 python3 main.py <your data folder>
 ```
 
+## TODO
+- [ ] make sure non cancer is always first
+- [ ] change boxes and whiskers to be a different colour
+- [ ] remove shading
+
 ## Config files
 ```json
 {
@@ -28,8 +33,15 @@ python3 main.py <your data folder>
     "colors": {
         "NC": "blue",
         "OV": "green",
-        "UCEC": "green"
-    }
+        "UCEC": "red",
+        "box": "black"
+    },
+    "precedence": ["NC", "normal", "Normal"],
+    "jitter": 0.5,
+    "line_width": 1.5,
+    "point_size": 6,
+    "plot_height": 540,
+    "plot_width": 960
 }
 ```
 
