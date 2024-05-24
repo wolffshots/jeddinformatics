@@ -39,11 +39,6 @@ from jeddinformatics import highchart_json_to_csv
 from jeddinformatics import plot_data
 
 
-# add 
-# 4 graphs 2 protein 2 gene
-# within protein ute and ov
-# within gene ute and ov
-
 def translate_in_mapping(input: str, mappings: MappingsType = {}) -> str:
     if input in mappings:
         logger.debug(
@@ -245,11 +240,11 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
                     is_gene=is_gene,
                 )
                 count_txt += 1
-            
+
             if file == "data.csv":
                 dest = os.sep.join(path_components[0:-2])
                 prev = merged_cancer_sources.get(dest, [])
-                prev.append(file_path) 
+                prev.append(file_path)
                 merged_cancer_sources.update({dest: prev})
     logger.info(
         f"finished processing {count_json} JSON files and {count_txt} TXT files"
@@ -271,7 +266,7 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
 #   └───{source database}
 #        └───{type of cancer}
 #             |───{gene or protein name}
-#             |    |───{graph per graph or protein} 
+#             |    |───{graph per graph or protein}
 #             |    └───{data.json or data.txt}
 #             └───{merged graph per cancer in database}
 # ```
