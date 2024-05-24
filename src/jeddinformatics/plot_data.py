@@ -129,11 +129,11 @@ def plot_formatted_csvs(
             if is_gene:
                 scatter_data.loc[mask, "Y"] = np.log2(scatter_data.loc[mask, "Y"])
 
-            name = (
+            name: str = (
                 translation_func(cancer_type, mappings=mappings)
                 if series_name == "Primary tumor" and cancer_type != ""
                 else translation_func(series_name, mappings=mappings)
-            ) + "\n" + input.split(os.sep)[-2]
+            ) + " \n" + input.split(os.sep)[-2]
 
             fig.add_trace(
                 go.Box(
@@ -142,7 +142,7 @@ def plot_formatted_csvs(
                     boxpoints="all",
                     pointpos=0,
                     marker=dict(
-                        color=color_for_series(name, colors), size=config["point_size"]
+                        color=color_for_series(name.split(" ")[0], colors), size=config["point_size"]
                     ),
                     line=dict(
                         color=color_for_series("box", colors), width=config["line_width"]
