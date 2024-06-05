@@ -15,7 +15,7 @@
         "OV": "green",
         "UCEC": "red",
         "box": "black",
-        "plot_background_color": "lightgray",
+        "plot_background_color": "white",
         "paper_background_color": "white"
     },
     "precedence": ["NC", "normal", "Normal"],

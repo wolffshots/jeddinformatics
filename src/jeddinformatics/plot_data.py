@@ -60,7 +60,7 @@ def plot_formatted_csv(
             go.Box(
                 y=scatter_data.loc[mask, "Y"],
                 name=name,
-                boxpoints="all",
+                boxpoints="outliers",
                 pointpos=0,
                 marker=dict(
                     color=color_for_series(name, colors), size=config["point_size"]
@@ -76,7 +76,8 @@ def plot_formatted_csv(
 
     # Update layout with titles and axis labels
     fig.update_layout(
-        xaxis={"type": "category"},
+        xaxis={"type": "category", "showline": True, "linecolor": "black"},
+        yaxis={"showline": True, "linecolor": "black"},
         yaxis_title=translation_func(yaxes_title, mappings=mappings),
         showlegend=False,
         plot_bgcolor=colors["plot_background_color"],
@@ -139,7 +140,7 @@ def plot_formatted_csvs(
                 go.Box(
                     y=scatter_data.loc[mask, "Y"],
                     name=name,
-                    boxpoints="all",
+                    boxpoints="outliers",
                     pointpos=0,
                     marker=dict(
                         color=color_for_series(name.split(" ")[0], colors), size=config["point_size"]
@@ -155,7 +156,8 @@ def plot_formatted_csvs(
 
     # Update layout with titles and axis labels
     fig.update_layout(
-        xaxis={"type": "category"},
+        xaxis={"type": "category", "showline": True, "linecolor": "black"},
+        yaxis={"showline": True, "linecolor": "black"},
         yaxis_title=translation_func(yaxes_title, mappings=mappings),
         showlegend=False,
         plot_bgcolor=colors["plot_background_color"],
