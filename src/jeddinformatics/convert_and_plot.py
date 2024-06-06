@@ -247,7 +247,7 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
                 prev.append(file_path)
                 merged_cancer_sources.update({dest: prev})
     logger.success(
-        f"finished processing {count_json} JSON files and {count_txt} TXT files"
+        f"processing {count_json} JSON files and {count_txt} TXT files"
     )
     count_cancer = 0
     for source in merged_cancer_sources:
@@ -266,7 +266,7 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
             cancer_type=source.split(os.sep)[-1],
             is_gene=source.split(os.sep)[-3].lower().find("gene") != -1,
         )
-        count_cancer+=1
+        count_cancer += 1
     logger.success(
         f"finished processing {count_cancer} cancer combinations"
     )
