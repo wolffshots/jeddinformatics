@@ -110,7 +110,6 @@ def plot_formatted_csvs(
     mappings = config["mappings"]
     colors = config["colors"]
     precedence = config["precedence"]
-    offset_group = 0
     for input in inputs:
         scatter_data = pd.read_csv(input)
 

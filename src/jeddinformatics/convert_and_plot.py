@@ -37,9 +37,9 @@ except Exception as e:
     logger.error(f"uncaught exception when trying to generate and import schema: {e}")
     raise e
 # import the rest
-from jeddinformatics import oncodb_to_csv
-from jeddinformatics import highchart_json_to_csv
-from jeddinformatics import plot_data
+from jeddinformatics import oncodb_to_csv  # noqa: E402
+from jeddinformatics import highchart_json_to_csv  # noqa: E402
+from jeddinformatics import plot_data  # noqa: E402
 
 
 def translate_in_mapping(input: str, mappings: MappingsType = {}) -> str:
@@ -78,7 +78,7 @@ def process_csv(
     config: schema_model.Model,
     cancer_type: str = "",
     is_gene: bool = False,
-    gene_or_protein = ""
+    gene_or_protein=""
 ) -> None:
     if file_path.find("all_csv_data") != -1:
         return
@@ -102,7 +102,7 @@ def process_json(
     config: schema_model.Model,
     cancer_type: str = "",
     is_gene: bool = False,
-    gene_or_protein = ""
+    gene_or_protein=""
 ) -> None:
     logger.debug(f"processing JSON file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
@@ -121,7 +121,7 @@ def process_txt(
     config: schema_model.Model,
     cancer_type: str = "",
     is_gene: bool = False,
-    gene_or_protein = ""
+    gene_or_protein=""
 ) -> None:
     logger.debug(f"processing TXT file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
