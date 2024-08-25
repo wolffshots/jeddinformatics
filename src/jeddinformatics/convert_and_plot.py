@@ -84,7 +84,7 @@ def process_csv(
         return
     logger.debug(f"processing CSV file: {file_path}")
     df = pd.read_csv(file_path)
-    df.columns = [f"{cancer_type} {gene_or_protein} {'X' if (col =='Series Name') else 'Y'}" for col in df.columns]
+    df.columns = [f"{cancer_type} {gene_or_protein} {'X' if (col == 'Series Name') else 'Y'}" for col in df.columns]
     all_data.append(df)
 
     plot_data.plot_formatted_csv(
