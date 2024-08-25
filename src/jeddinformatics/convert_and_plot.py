@@ -5,7 +5,10 @@ import fnmatch
 from loguru import logger
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
+import pandas as pd
 from jeddinformatics import generate_types
+
+all_data = []
 
 try:
     # Attempt to generate and import the model
@@ -75,8 +78,15 @@ def process_csv(
     config: schema_model.Model,
     cancer_type: str = "",
     is_gene: bool = False,
+    gene_or_protein = ""
 ) -> None:
+    if file_path.find("all_csv_data") != -1:
+        return
     logger.debug(f"processing CSV file: {file_path}")
+    df = pd.read_csv(file_path)
+    df.columns = [f"{cancer_type} {gene_or_protein} {'X' if (col =='Series Name') else 'Y'}" for col in df.columns]
+    all_data.append(df)
+
     plot_data.plot_formatted_csv(
         config=config,
         input=file_path,
@@ -92,6 +102,7 @@ def process_json(
     config: schema_model.Model,
     cancer_type: str = "",
     is_gene: bool = False,
+    gene_or_protein = ""
 ) -> None:
     logger.debug(f"processing JSON file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
@@ -101,6 +112,7 @@ def process_json(
         config=config,
         cancer_type=cancer_type,
         is_gene=is_gene,
+        gene_or_protein=gene_or_protein
     )
 
 
@@ -109,6 +121,7 @@ def process_txt(
     config: schema_model.Model,
     cancer_type: str = "",
     is_gene: bool = False,
+    gene_or_protein = ""
 ) -> None:
     logger.debug(f"processing TXT file: {file_path}")
     output_path = replace_file_extension(file_path, "csv")
@@ -118,6 +131,7 @@ def process_txt(
         config=config,
         cancer_type=cancer_type,
         is_gene=is_gene,
+        gene_or_protein=gene_or_protein
     )
 
 
@@ -230,6 +244,7 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
                     config=config,
                     cancer_type=cancer_type,
                     is_gene=is_gene,
+                    gene_or_protein=gene_or_protein_name
                 )
                 count_json += 1
             elif file == "data.txt":
@@ -238,6 +253,7 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
                     config=config,
                     cancer_type=cancer_type,
                     is_gene=is_gene,
+                    gene_or_protein=gene_or_protein_name
                 )
                 count_txt += 1
 
@@ -249,6 +265,11 @@ def process_files(root_directory: str = ".") -> None:  # noqa: C901
     logger.success(
         f"processing {count_json} JSON files and {count_txt} TXT files"
     )
+    if all_data:
+        global_df = pd.concat(all_data, axis=1)
+        # Save the concatenated DataFrame to a CSV file
+        global_df.to_csv(root_directory+'/all_csv_data.csv', index=False)
+        global_df.to_excel(root_directory+'/all_csv_data.xlsx', index=False, engine='openpyxl')
     count_cancer = 0
     for source in merged_cancer_sources:
         cancer_type = source.split(os.sep)[-1]

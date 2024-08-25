@@ -19,3 +19,6 @@ LICENSE
 schema.json
 config*.json
 *.TAG
+all_csv_data.csv
+all_csv_data.xlsx
+all_csv_data.*
